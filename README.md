@@ -2,15 +2,6 @@
 
 A simple full-stack notes app built with TanStack Start and MongoDB, showcasing type-safe server functions, SSR, and a clean MongoDB integration.
 
-## Tech Stack
-
-- **Framework**: [TanStack Start](https://tanstack.com/start) - Full-stack React framework
-- **Router**: [TanStack Router](https://tanstack.com/router) - Type-safe routing
-- **Database**: [MongoDB](https://www.mongodb.com/) - Document database
-- **Validation**: [Zod](https://zod.dev/) - TypeScript-first schema validation
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS
-- **Language**: TypeScript - End-to-end type safety
-
 ## Prerequisites
 
 Before you begin, ensure you have:
@@ -93,7 +84,7 @@ Edit `.env` and add your MongoDB connection string:
 
 ```env
 # For MongoDB Atlas
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/notes-app
+# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/notes-app
 
 # For local MongoDB
 # MONGODB_URI=mongodb://localhost:27017/notes-app
