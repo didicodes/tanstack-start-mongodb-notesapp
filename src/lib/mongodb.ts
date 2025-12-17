@@ -25,52 +25,6 @@ const cached: CachedConnection = {
 };
 
 /**
- * Parse MongoDB errors into user-friendly messages
- */
-function getConnectionErrorMessage(error: Error): string {
-  const errorMsg = error.message.toLowerCase();
-
-  // Authentication errors
-  if (
-    errorMsg.includes("bad auth") ||
-    errorMsg.includes("authentication failed")
-  ) {
-    return "Authentication failed. Check your MongoDB credentials.";
-  }
-
-  // Network/DNS errors
-  if (errorMsg.includes("enotfound") || errorMsg.includes("getaddrinfo")) {
-    return "Cannot reach MongoDB server. Check your connection string.";
-  }
-
-  // Timeout errors
-  if (errorMsg.includes("timeout") || errorMsg.includes("timed out")) {
-    return "Connection timeout. MongoDB server may be down or unreachable.";
-  }
-
-  // IP whitelist errors (common with MongoDB Atlas)
-  if (errorMsg.includes("ip") && errorMsg.includes("whitelist")) {
-    return "IP address not whitelisted in MongoDB Atlas.";
-  }
-
-  // Connection string format errors
-  if (
-    errorMsg.includes("invalid connection string") ||
-    errorMsg.includes("uri must")
-  ) {
-    return "Invalid MongoDB connection string format.";
-  }
-
-  // Server selection errors
-  if (errorMsg.includes("server selection")) {
-    return "Cannot connect to MongoDB. Server may be down.";
-  }
-
-  // Generic fallback
-  return `MongoDB connection error: ${error.message}`;
-}
-
-/**
  * Get or create a MongoDB connection
  *
  * This is the heart of our serverless optimization.
@@ -103,7 +57,7 @@ export async function connectToDatabase(): Promise<{
     );
   }
 
-  // Tier 3: Create a new connection with error handling
+  // Tier 3: Create a new connection
   cached.promise = MongoClient.connect(MONGODB_URI, {
     appName: "tanstack-notes-app",
     ...MONGODB_CONNECTION_CONFIG,
@@ -118,9 +72,9 @@ export async function connectToDatabase(): Promise<{
       return { client, db };
     })
     .catch((error) => {
+      // Reset promise on error to allow retry
       cached.promise = null;
-      const message = getConnectionErrorMessage(error);
-      throw new Error(message);
+      throw error;
     });
 
   return cached.promise;
